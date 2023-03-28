@@ -1,0 +1,105 @@
+{% extends "template.html"%}
+{% block conteudo %}
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-briefcase" data-toggle="tooltip" data-placement="right"></i> {{ titulo }}
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('editarContrato',id=id)}}"><i class="bi bi-pencil" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('contrato')}}"><i class="bi bi-reply" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+</div>
+<div class="boxformulario">
+  <fieldset>
+    {{form.csrf_token()}}
+    <div class="form-group">{{ form.cod_cliente.label(class='form-label') }}
+      {{ form.cod_cliente(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.obj_contrato.label(class='form-label') }}
+      {{ form.obj_contrato(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.datavalidade_contrato.label(class='form-label') }}
+      {{ form.datavalidade_contrato(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.status_contrato.label(class='form-label') }}
+      {{ form.status_contrato(class='form-control') }}
+    </div>
+  </fieldset>  
+</div>
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-archive" data-toggle="tooltip" data-placement="right"></i> Arquivos
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('novoContratoArquivo',id=id)}}">
+      <i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i>
+    </a></div>
+</div>
+{% if contrato_arquivos %}
+<div class="boxcentral">
+  <table class="table table-bordered table-responsiv table-hover">
+      <thead>
+          <tr>
+            <th width="90%">Arquivo</th>
+            <th width="10%" colspan="2">Ações</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for arquivo in contrato_arquivos %}
+          <tr>
+              <td class="text-left">{{ arquivo.arquivo_contrato_arquivo }}</td>
+              <td>
+                <a class="btn" href="{{url_for('excluirArquivo',id=arquivo.cod_contrato_arquivo)}}"><i class="bi bi-eraser" style="font-size:1.5rem; color:black;"></i></a>
+              </td>           
+              <td>
+                <a class="btn" target="_blank" href="../static/upload/{{arquivo.arquivo_contrato_arquivo }}">
+                  <i class="bi bi-eye" style="font-size:1.5rem; color:black;"></i>
+                </a>
+              </td>                             
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-card-text" data-toggle="tooltip" data-placement="right"></i> Aditivos
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('novoAditivo',id=id)}}">
+      <i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i>
+    </a></div>
+</div>
+<div class="boxcentral">
+  <table class="table table-bordered table-responsiv table-hover">
+      <thead>
+          <tr>
+            <th width="10%">Data</th>
+            <th width="70%">Descritivo</th>
+            <th width="10%">Status</th>
+            <th width="10%">Ações</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for aditivo in aditivos %}
+          <tr>
+              <td class="text-left">{{ aditivo.data_aditivo.strftime('%d/%m/%Y') }}</td>
+              <td class="text-left">{{ aditivo.desc_aditivo }}</td>
+              <td class="text-left">
+                {% if aditivo.status_aditivo == 0: %}
+                <i class="btn bi bi-toggle-on text-success" style="font-size:2rem; color:white;">
+                {% else %}
+                <i class="btn bi bi-toggle-off text-danger" style="font-size:2rem; color:white;">
+                {% endif %}                       
+              <td>
+                <a class="btn" href="{{url_for('visualizarAditivo',id=aditivo.cod_aditivo)}}"><i class="bi bi-eye" style="font-size:1.5rem; color:black;"></i></a>
+            </td>              
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock%}

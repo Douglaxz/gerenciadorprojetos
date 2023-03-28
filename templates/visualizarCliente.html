@@ -1,0 +1,49 @@
+{% extends "template.html"%}
+{% block conteudo %}
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-person-workspace" data-toggle="tooltip" data-placement="right"></i> {{ titulo }}
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('editarCliente',id=id)}}"><i class="bi bi-pencil" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('cliente')}}"><i class="bi bi-reply" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+</div>
+<div class="boxformulario">
+  <fieldset>
+    {{form.csrf_token()}}
+    <div class="form-group">{{ form.cnpj_cliente.label(class='form-label') }}
+      {{ form.cnpj_cliente(class='form-control') }}
+    </div>          
+    <div class="form-group">{{ form.nomerazao_cliente.label(class='form-label') }}
+      {{ form.nomerazao_cliente(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.nomefantasia_cliente.label(class='form-label') }}
+      {{ form.nomefantasia_cliente(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.end_cliente.label(class='form-label') }}
+      {{ form.end_cliente(class='form-control') }}
+    </div>      
+    <div class="form-group">{{ form.numend_cliente.label(class='form-label') }}
+      {{ form.numend_cliente(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.bairro_cliente.label(class='form-label') }}
+      {{ form.bairro_cliente(class='form-control') }}
+    </div>     
+    <div class="form-group">{{ form.cidade_cliente.label(class='form-label') }}
+      {{ form.cidade_cliente(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.uf_cliente.label(class='form-label') }}
+      {{ form.uf_cliente(class='form-control') }}
+    </div>      
+    <div class="form-group">{{ form.complemento_cliente.label(class='form-label') }}
+      {{ form.complemento_cliente(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.status.label(class='form-label') }}
+      {{ form.status(class='form-control') }}
+    </div>
+  </fieldset>
+</div>
+{% endblock%}
