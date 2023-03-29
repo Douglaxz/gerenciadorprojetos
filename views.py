@@ -11,7 +11,8 @@ db.create_all()
 from sqlalchemy import func
 from models import tb_user,\
     tb_usertype,\
-    tb_projetos
+    tb_projetos,\
+    tb_backlogs
 from helpers import \
     frm_pesquisa, \
     frm_editar_senha,\
@@ -20,7 +21,9 @@ from helpers import \
     frm_visualizar_tipousuario,\
     frm_editar_tipousuario,\
     frm_visualizar_projeto,\
-    frm_editar_projeto
+    frm_editar_projeto,\
+    frm_visualizar_backlog,\
+    frm_editar_backlog    
 
 # ITENS POR PÁGINA
 from config import ROWS_PER_PAGE, CHAVE
@@ -579,3 +582,148 @@ def atualizarProjeto():
     else:
         flash('Favor verificar os campos!','danger')
     return redirect(url_for('visualizarProjeto', id=request.form['id']))
+
+##################################################################################################################################
+#BACKLOG
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: novoBacklog
+#FUNÇÃO: formulario de inclusão
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/novoBacklog')
+def novoProjeto():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('novoBacklog'))) 
+    form = frm_editar_projeto()
+    return render_template('novoBacklog.html', titulo='Novo Backlog', form=form)
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: criarBacklog
+#FUNÇÃO: inclusão no banco de dados
+#PODE ACESSAR: administrador
+#--------------------------------------------------------------------------------------------------------------------------------- 
+@app.route('/criarBacklog', methods=['POST',])
+def criarBacklog():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('criarBacklog')))     
+    form = frm_editar_backlog(request.form)
+    if not form.validate_on_submit():
+        flash('Por favor, preencha todos os dados','danger')
+        return redirect(url_for('criarBacklog'))
+    desc_backlog  = form.desc_backlog.data
+    datacriacao_backlog = form.datacriacao_backlog.data
+    prioridade_backlog = form.prioridade_backlog.data
+    estimativa_backlog = form.estimativa_backlog.data
+    dependencias_backlog = form.dependencias_backlog.data
+    datacriacao_backlog = form.datacriacao_backlog.data
+    dataconclusao_backlog = form.obs_backlog.data
+    esforco_backlog = form.esforco_backlog.data
+    status_backlog = form.status_backlog.data
+    obs_backlog = form.obs_backlog.data
+    cod_projeto = form.cod_projeto.data
+    backlog = tb_backlogs.query.filter_by(desc_backlog=desc_backlog).first()
+    if projeto:
+        flash ('Projeto já existe','danger')
+        return redirect(url_for('cliente')) 
+    backlog = tb_backlogs(desc_backlog=desc_backlog,\
+                            datacriacao_backlog = datacriacao_backlog,\
+                            datafim_projeto = datafim_projeto,\
+                            prioridade_backlog = prioridade_backlog,\
+                            estimativa_backlog = estimativa_backlog,\
+                            dependencias_backlog = dependencias_backlog,\
+                            datacriacao_backlog = datacriacao_backlog,\
+                            dataconclusao_backlog = dataconclusao_backlog,\
+                            esforco_backlog = esforco_backlog,\
+                            obs_backlog = obs_backlog,\
+                            cod_projeto = cod_projeto,\
+                            status_backlog=status_backlog)
+    flash('Projeto criado com sucesso!','success')
+    db.session.add(novoProjeto)
+    db.session.commit()
+    return redirect(url_for('projeto'))
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: visualizarBacklog
+#FUNÇÃO: formulario de visualização
+#PODE ACESSAR: administrador
+#--------------------------------------------------------------------------------------------------------------------------------- 
+@app.route('/visualizarBacklog/<int:id>')
+def visualizarBacklog(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('visualizarBacklog')))  
+    backlog = tb_backlogs.query.filter_by(cod_backlog=id).first()
+    form = frm_visualizar_backlog()
+    form.desc_backlog.data = backlog.desc_backlog
+    form.datacriacao_backlog.data = backlog.datacriacao_backlog
+    form.prioridade_backlog.data = backlog.prioridade_backlog
+    form.estimativa_backlog.data = backlog.estimativa_backlog
+    form.dependencias_backlog.data = backlog.dependencias_backlog
+    form.datacriacao_backlog.data = backlog.datacriacao_backlog
+    form.obs_backlog.data = backlog.dataconclusao_backlog
+    form.esforco_backlog.data = backlog.esforco_backlog
+    form.status_backlog.data = backlog.status_backlog
+    form.obs_backlog.data = backlog.obs_backlog
+    form.cod_projeto.data = backlog.cod_projeto
+    return render_template('visualizarBacklog.html', titulo='Visualizar Backlog', id=id, form=form)   
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: editarBacklog
+##FUNÇÃO: formulário de edição
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/editarBacklog/<int:id>')
+def editarBacklog(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('editarBacklog')))  
+    backlog = tb_backlogs.query.filter_by(cod_backlog=id).first()
+    form = frm_editar_backlog()
+    form.desc_backlog.data = backlog.desc_backlog
+    form.datacriacao_backlog.data = backlog.datacriacao_backlog
+    form.prioridade_backlog.data = backlog.prioridade_backlog
+    form.estimativa_backlog.data = backlog.estimativa_backlog
+    form.dependencias_backlog.data = backlog.dependencias_backlog
+    form.datacriacao_backlog.data = backlog.datacriacao_backlog
+    form.obs_backlog.data = backlog.dataconclusao_backlog
+    form.esforco_backlog.data = backlog.esforco_backlog
+    form.status_backlog.data = backlog.status_backlog
+    form.obs_backlog.data = backlog.obs_backlog
+    form.cod_projeto.data = backlog.cod_projeto
+    return render_template('editarBacklog.html', titulo='Editar Backlog', id=id, form=form)   
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: atualizarBacklog
+#FUNÇÃO: alterar informações no banco de dados
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/atualizarBacklog', methods=['POST',])
+def atualizarBacklog():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('atualizarBacklog')))      
+    form = frm_editar_backlog(request.form)
+    if form.validate_on_submit():
+        id = request.form['id']
+        backlog = tb_backlogs.query.filter_by(cod_backlog=request.form['id']).first()
+        backlog.desc_backlog = form.desc_backlog.data
+        backlog.prioridade_backlog = form.prioridade_backlog.data
+        backlog.estimativa_backlog = form.estimativa_backlog.data
+        backlog.dependencias_backlog = form.dependencias_backlog.data
+        backlog.criterios_backlog = form.criterios_backlog.data
+        backlog.datacriacao_backlog = form.datacriacao_backlog.data
+        backlog.dataconclusao_backlog = form.dataconclusao_backlog.data
+        backlog.obs_backlog = form.obs_backlog.data
+        backlog.status_backlog = form.status_backlog.data
+        backlog.esforco_backlog = form.esforco_backlog.data
+        backlog.cod_projeto = form.cod_projeto.data        
+        db.session.add(backlog)
+        db.session.commit()
+        flash('Backlog atualizado com sucesso!','success')
+    else:
+        flash('Favor verificar os campos!','danger')
+    return redirect(url_for('visualizarBacklog', id=request.form['id']))

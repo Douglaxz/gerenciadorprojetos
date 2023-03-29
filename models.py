@@ -47,23 +47,7 @@ class tb_projetos(db.Model):
 #TABELA: PROJETOS
 #ORIGEM: BANCO DE DADOS
 #---------------------------------------------------------------------------------------------------------------------------------
-class tb_projetos(db.Model):
-    cod_projeto = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nome_projeto = db.Column(db.String(50), nullable=False)
-    datainicio_projeto = db.Column(db.Date, nullable=False)
-    datafim_projeto = db.Column(db.Date, nullable=False)
-    desc_projeto = db.Column(db.String(50), nullable=False)
-    cod_usuario = db.Column(db.Integer, nullable=False)
-    status_projeto = db.Column(db.Integer, nullable=False)
-    def __repr__(self):
-        return '<Name %r>' % self.name
-
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: PROJETOS
-#ORIGEM: BANCO DE DADOS
-#---------------------------------------------------------------------------------------------------------------------------------
-class tb_backlog(db.Model):
+class tb_backlogs(db.Model):
     cod_backlog = db.Column(db.Integer, primary_key=True, autoincrement=True)
     desc_backlog = db.Column(db.String(50), nullable=False)
     prioridade_backlog = db.Column(db.Integer, nullable=False)
@@ -74,6 +58,8 @@ class tb_backlog(db.Model):
     dataconclusao_backlog = db.Column(db.Date, nullable=False)
     obs_backlog = db.Column(db.String(500), nullable=False)    
     status_backlog = db.Column(db.Integer, nullable=False)
+    esforco_backlog = db.Column(db.Integer, nullable=False)
+    cod_projeto = db.Column(db.Integer, nullable=False)
     def __repr__(self):
         return '<Name %r>' % self.name
     

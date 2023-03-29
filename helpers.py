@@ -1,7 +1,7 @@
 #importações
 import os
 from gerenciadorprojetos import app, db
-from models import tb_user, tb_usertype
+from models import tb_user, tb_usertype, tb_projetos, tb_backlogs
 from flask_wtf import FlaskForm
 from wtforms import Form, StringField, validators, SubmitField,IntegerField, SelectField,PasswordField,DateField,EmailField,BooleanField,RadioField, TextAreaField, TimeField, TelField, DateTimeLocalField,FloatField, DecimalField,FileField
 
@@ -90,7 +90,7 @@ class frm_visualizar_tipousuario(FlaskForm):
 ##################################################################################################################################
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: tipo de usuário
+#FORMUÁRIO: projetos
 #TIPO: edição
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -115,5 +115,48 @@ class frm_visualizar_projeto(FlaskForm):
     desc_projeto = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
     cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
     status_projeto = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+    salvar = SubmitField('Salvar')
+
+##################################################################################################################################
+#BACKLOGS
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: backlogs
+#TIPO: edição
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_editar_backlog(FlaskForm):
+    desc_backlog = StringField('Tarefa:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o nome do projeto"})
+    datacriacao_backlog = DateField('Data início:')
+    dataconclusao_backlog = DateField('Data conclusão:',)
+    obs_backlog = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
+    cod_projeto = SelectField('Tipo:', coerce=int, choices=[(g.cod_projeto, g.nome_projeto) for g in tb_projetos.query.all()])
+    status_backlog = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
+    estimativa_backlog = DecimalField('Situação:')
+    dependencias_backlog = TextAreaField('Dependências:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
+    criterios_backlog = TextAreaField('Critérios de aceitação:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
+    esforco_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')])
+    prioridade_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
+    salvar = SubmitField('Salvar')    
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: tipo de usuário
+#TIPO: visualização
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_visualizar_backlog(FlaskForm):
+    desc_backlog = StringField('Tarefa:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    datacriacao_backlog = DateField('Inicío:', render_kw={'readonly': True})
+    dataconclusao_backlog = DateField('Final:', render_kw={'readonly': True})
+    obs_backlog = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    cod_projeto = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
+    status_backlog = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+    estimativa_backlog = DecimalField('Situação:', render_kw={'readonly': True})
+    dependencias_backlog = TextAreaField('Dependências:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
+    criterios_backlog = TextAreaField('Critérios de aceitação:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
+    esforco_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')], render_kw={'readonly': True})
+    prioridade_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])    
     salvar = SubmitField('Salvar')        
+
 
