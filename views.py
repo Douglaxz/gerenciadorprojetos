@@ -11,10 +11,7 @@ db.create_all()
 from sqlalchemy import func
 from models import tb_user,\
     tb_usertype,\
-    tb_clientes,\
-    tb_contratos,\
-    tb_contrato_arquivos,\
-    tb_aditivos
+    tb_projetos
 from helpers import \
     frm_pesquisa, \
     frm_editar_senha,\
@@ -22,14 +19,8 @@ from helpers import \
     frm_visualizar_usuario, \
     frm_visualizar_tipousuario,\
     frm_editar_tipousuario,\
-    frm_visualizar_cliente,\
-    frm_editar_cliente,\
-    frm_editar_contrato,\
-    frm_visualizar_contrato,\
-    frm_editar_aditivo,\
-    frm_visualizar_aditivo,\
-    frm_editar_contrato_arquivo
-    
+    frm_visualizar_projeto,\
+    frm_editar_projeto
 
 # ITENS POR PÁGINA
 from config import ROWS_PER_PAGE, CHAVE
@@ -446,7 +437,7 @@ def atualizarTipoUsuario():
 
 
 ##################################################################################################################################
-#CLIENTE
+#PROJETOS
 ##################################################################################################################################
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -454,8 +445,8 @@ def atualizarTipoUsuario():
 #FUNÇÃO: listar
 #PODE ACESSAR: administrador
 #---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/cliente', methods=['POST','GET'])
-def cliente():
+@app.route('/projeto', methods=['POST','GET'])
+def projeto():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('cliente')))         
@@ -466,447 +457,125 @@ def cliente():
         pesquisa = form.pesquisa_responsiva.data
     
     if pesquisa == "" or pesquisa == None:     
-        clientes = tb_clientes.query.order_by(tb_clientes.nomerazao_cliente)\
+        projetos = tb_projetos.query.order_by(tb_projetos.nome_projeto)\
         .paginate(page=page, per_page=ROWS_PER_PAGE , error_out=False)
     else:
-        clientes = tb_clientes.query.order_by(tb_clientes.nomerazao_cliente)\
-        .filter(tb_clientes.nomerazao_cliente.ilike(f'%{pesquisa}%'))\
+        projetos = tb_projetos.query.order_by(tb_projetos.nome_projeto)\
+        .filter(tb_projetos.nome_projeto.ilike(f'%{pesquisa}%'))\
         .paginate(page=page, per_page=ROWS_PER_PAGE, error_out=False)        
-    return render_template('cliente.html', titulo='Cliente', clientes=clientes, form=form)
+    return render_template('projetos.html', titulo='Projetos', projetos=projetos, form=form)
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: novoCliente
+#ROTA: novoProjeto
 #FUNÇÃO: formulario de inclusão
 #PODE ACESSAR: administrador
 #---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/novoCliente')
-def novoCliente():
+@app.route('/novoProjeto')
+def novoProjeto():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('novoCliente'))) 
-    form = frm_editar_cliente()
-    return render_template('novoCliente.html', titulo='Novo Cliente', form=form)
+        return redirect(url_for('login',proxima=url_for('novoProjeto'))) 
+    form = frm_editar_projeto()
+    return render_template('novoProjeto.html', titulo='Novo Projeto', form=form)
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: criarCliente
+#ROTA: criarProjeto
 #FUNÇÃO: inclusão no banco de dados
 #PODE ACESSAR: administrador
 #--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/criarCliente', methods=['POST',])
-def criarCliente():
+@app.route('/criarProjeto', methods=['POST',])
+def criarProjeto():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('criarCliente')))     
-    form = frm_editar_cliente(request.form)
+        return redirect(url_for('login',proxima=url_for('criarProjeto')))     
+    form = frm_editar_projeto(request.form)
     if not form.validate_on_submit():
         flash('Por favor, preencha todos os dados','danger')
-        return redirect(url_for('criarCliente'))
-    nomerazao_cliente  = form.nomerazao_cliente.data
-    nomefantasia_cliente = form.nomefantasia_cliente.data
-    end_cliente = form.end_cliente.data
-    numend_cliente = form.numend_cliente.data
-    bairro_cliente = form.bairro_cliente.data
-    cidade_cliente = form.cidade_cliente.data
-    uf_cliente = form.uf_cliente.data
-    complemento_cliente = form.complemento_cliente.data
-    cnpj_cliente = form.nomerazao_cliente.data
-    status = form.status.data
-    cliente = tb_clientes.query.filter_by(cnpj_cliente=cnpj_cliente).first()
-    if cliente:
-        flash ('Patrocinador já existe','danger')
+        return redirect(url_for('criarProjeto'))
+    nome_projeto  = form.nome_projeto.data
+    datainicio_projeto = form.datainicio_projeto.data
+    datafim_projeto = form.datafim_projeto.data
+    desc_projeto = form.desc_projeto.data
+    cod_usuario = form.cod_usuario.data
+    status_projeto = form.status_projeto.data
+    projeto = tb_projetos.query.filter_by(nome_projeto=nome_projeto).first()
+    if projeto:
+        flash ('Projeto já existe','danger')
         return redirect(url_for('cliente')) 
-    novoCliente = tb_clientes(nomerazao_cliente=nomerazao_cliente,\
-                            nomefantasia_cliente = nomefantasia_cliente,\
-                            end_cliente = end_cliente,\
-                            numend_cliente = numend_cliente,\
-                            bairro_cliente = bairro_cliente,\
-                            cidade_cliente = cidade_cliente,\
-                            uf_cliente = uf_cliente,\
-                            complemento_cliente = complemento_cliente,\
-                            cnpj_cliente = cnpj_cliente,\
-                            status_cliente=status)
-    flash('Cliente criado com sucesso!','success')
-    db.session.add(novoCliente)
+    novoProjeto = tb_projetos(nome_projeto=nome_projeto,\
+                            datainicio_projeto = datainicio_projeto,\
+                            datafim_projeto = datafim_projeto,\
+                            desc_projeto = desc_projeto,\
+                            cod_usuario = cod_usuario,\
+                            status_projeto=status_projeto)
+    flash('Projeto criado com sucesso!','success')
+    db.session.add(novoProjeto)
     db.session.commit()
-    return redirect(url_for('cliente'))
+    return redirect(url_for('projeto'))
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: visualizarCliente
+#ROTA: visualizarProjeto
 #FUNÇÃO: formulario de visualização
 #PODE ACESSAR: administrador
 #--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/visualizarCliente/<int:id>')
-def visualizarCliente(id):
+@app.route('/visualizarProjeto/<int:id>')
+def visualizarProjeto(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('visualizarCliente')))  
-    cliente = tb_clientes.query.filter_by(cod_cliente=id).first()
-    form = frm_visualizar_cliente()
-    form.nomerazao_cliente.data = cliente.nomerazao_cliente
-    form.nomefantasia_cliente.data = cliente.nomefantasia_cliente
-    form.end_cliente.data = cliente.end_cliente
-    form.numend_cliente.data = cliente.numend_cliente
-    form.bairro_cliente.data = cliente.bairro_cliente
-    form.cidade_cliente.data = cliente.cidade_cliente
-    form.uf_cliente.data = cliente.uf_cliente
-    form.complemento_cliente.data = cliente.complemento_cliente
-    form.cnpj_cliente.data = cliente.cnpj_cliente
-    form.status.data = cliente.status_cliente
-    return render_template('visualizarCliente.html', titulo='Visualizar Cliente', id=id, form=form)   
+        return redirect(url_for('login',proxima=url_for('visualizarProjeto')))  
+    projeto = tb_projetos.query.filter_by(cod_projeto=id).first()
+    form = frm_visualizar_projeto()
+    form.nome_projeto.data = projeto.nome_projeto
+    form.datainicio_projeto.data = projeto.datainicio_projeto
+    form.datafim_projeto.data = projeto.datafim_projeto
+    form.desc_projeto.data = projeto.desc_projeto
+    form.cod_usuario.data = projeto.cod_usuario
+    form.status_projeto.data = projeto.status_projeto
+    return render_template('visualizarProjeto.html', titulo='Visualizar Projeto', id=id, form=form)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: editarCliente
+#ROTA: editarProjeto
 ##FUNÇÃO: formulário de edição
 #PODE ACESSAR: administrador
 #---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/editarCliente/<int:id>')
-def editarCliente(id):
+@app.route('/editarProjeto/<int:id>')
+def editarProjeto(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('editarCliente')))  
-    cliente = tb_clientes.query.filter_by(cod_cliente=id).first()
-    form = frm_editar_cliente()
-    form.nomerazao_cliente.data = cliente.nomerazao_cliente
-    form.nomefantasia_cliente.data = cliente.nomefantasia_cliente
-    form.end_cliente.data = cliente.end_cliente
-    form.numend_cliente.data = cliente.numend_cliente
-    form.bairro_cliente.data = cliente.bairro_cliente
-    form.cidade_cliente.data = cliente.cidade_cliente
-    form.uf_cliente.data = cliente.uf_cliente
-    form.complemento_cliente.data = cliente.complemento_cliente
-    form.cnpj_cliente.data = cliente.cnpj_cliente
-    form.status.data = cliente.status_cliente
-    return render_template('editarCliente.html', titulo='Editar Cliente', id=id, form=form)   
+        return redirect(url_for('login',proxima=url_for('editarProjeto')))  
+    projeto = tb_projetos.query.filter_by(cod_projeto=id).first()
+    form = frm_editar_projeto()
+    form.nome_projeto.data = projeto.nome_projeto
+    form.datainicio_projeto.data = projeto.datainicio_projeto
+    form.datafim_projeto.data = projeto.datafim_projeto
+    form.desc_projeto.data = projeto.desc_projeto
+    form.cod_usuario.data = projeto.cod_usuario
+    form.status_projeto.data = projeto.status_projeto
+    return render_template('editarProjeto.html', titulo='Editar Projeto', id=id, form=form)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: atualizarCliente
+#ROTA: atualizarProjeto
 #FUNÇÃO: alterar informações no banco de dados
 #PODE ACESSAR: administrador
 #---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/atualizarCliente', methods=['POST',])
-def atualizarCliente():
+@app.route('/atualizarProjeto', methods=['POST',])
+def atualizarProjeto():
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('atualizarCliente')))      
-    form = frm_editar_cliente(request.form)
+    form = frm_editar_projeto(request.form)
     if form.validate_on_submit():
         id = request.form['id']
-        cliente = tb_clientes.query.filter_by(cod_cliente=request.form['id']).first()
-        cliente.nomerazao_cliente = form.nomerazao_cliente.data
-        cliente.nomefantasia_cliente = form.nomefantasia_cliente.data
-        cliente.end_cliente = form.end_cliente.data
-        cliente.numend_cliente = form.numend_cliente.data
-        cliente.bairro_cliente = form.bairro_cliente.data
-        cliente.cidade_cliente = form.cidade_cliente.data
-        cliente.uf_cliente = form.uf_cliente.data
-        cliente.complemento_cliente = form.complemento_cliente.data
-        cliente.cnpj_cliente = form.cnpj_cliente.data
-        cliente.status_cliente = form.status.data
-        db.session.add(cliente)
+        projeto = tb_projetos.query.filter_by(cod_projeto=request.form['id']).first()
+        projeto.nome_projeto = form.nome_projeto.data
+        projeto.datainicio_projeto = form.datainicio_projeto.data
+        projeto.datafim_projeto = form.datafim_projeto.data
+        projeto.desc_projeto = form.desc_projeto.data
+        projeto.cod_usuario = form.cod_usuario.data
+        projeto.status_projeto = form.status_projeto.data
+        db.session.add(projeto)
         db.session.commit()
-        flash('Patrocinador atualizado com sucesso!','success')
+        flash('Projeto atualizado com sucesso!','success')
     else:
         flash('Favor verificar os campos!','danger')
-    return redirect(url_for('visualizarCliente', id=request.form['id']))
-
-##################################################################################################################################
-#CONTRATOS
-##################################################################################################################################
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: contrato
-#FUNÇÃO: listar
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/contrato', methods=['POST','GET'])
-def contrato():
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('evento')))         
-    page = request.args.get('page', 1, type=int)
-    form = frm_pesquisa()   
-    pesquisa = form.pesquisa.data
-    if pesquisa == "":
-        pesquisa = form.pesquisa_responsiva.data
-    
-    if pesquisa == "" or pesquisa == None:     
-        contratos = tb_contratos.query\
-        .join(tb_clientes, tb_clientes.cod_cliente==tb_contratos.cod_cliente)\
-        .add_columns(tb_clientes.nomerazao_cliente, tb_contratos.cod_contrato, tb_contratos.datavalidade_contrato, tb_contratos.status_contrato)\
-        .order_by(tb_contratos.datavalidade_contrato)\
-        .paginate(page=page, per_page=ROWS_PER_PAGE , error_out=False)
-    else:
-        contratos = tb_contratos.query\
-        .join(tb_clientes, tb_clientes.cod_cliente==tb_contratos.cod_cliente)\
-        .add_columns(tb_clientes.nomerazao_cliente, tb_contratos.cod_contrato, tb_contratos.datavalidade_contrato, tb_contratos.status_contrato)\
-        .order_by(tb_contratos.datavalidade_contrato)\
-        .filter(tb_contratos.nomerazao_cliente.ilike(f'%{pesquisa}%'))\
-        .paginate(page=page, per_page=ROWS_PER_PAGE, error_out=False)        
-    return render_template('contrato.html', titulo='Eventos', contratos=contratos, form=form)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: novoContrato
-#FUNÇÃO: formulario de inclusão
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/novoContrato')
-def novoContrato():
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('novoContrato'))) 
-    form = frm_editar_contrato()
-    return render_template('novoContrato.html', titulo='Novo Contrato', form=form)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: criarContrato
-#FUNÇÃO: inclusão no banco de dados
-#PODE ACESSAR: administrador
-#--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/criarContrato', methods=['POST',])
-def criarContrato():
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('criarContrato')))     
-    form = frm_editar_contrato(request.form)
-    if not form.validate_on_submit():
-        flash('Por favor, preencha todos os dados','danger')
-        return redirect(url_for('criarContrato'))
-    cod_cliente  = form.cod_cliente.data
-    obj_contrato = form.obj_contrato.data
-    datavalidade_contrato = form.datavalidade_contrato.data
-    status_contrato = form.status_contrato.data
-    contrato = tb_contratos.query.filter_by(obj_contrato=obj_contrato).first()
-    if contrato:
-        flash ('Contrato já existe','danger')
-        return redirect(url_for('cliente')) 
-    novoContrato = tb_contratos(cod_cliente=cod_cliente,\
-                            obj_contrato = obj_contrato,\
-                            datavalidade_contrato = datavalidade_contrato,\
-                            status_contrato=status_contrato)
-    flash('Contrato criado com sucesso!','success')
-    db.session.add(novoContrato)
-    db.session.commit()
-    return redirect(url_for('contrato'))
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: visualizarContrato
-#FUNÇÃO: formulario de visualização
-#PODE ACESSAR: administrador
-#--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/visualizarContrato/<int:id>')
-def visualizarContrato(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('visualizarContrato')))  
-    contrato = tb_contratos.query.filter_by(cod_contrato=id).first()
-    contrato_arquivos = tb_contrato_arquivos.query.filter_by(cod_contrato=id).all()
-
-    aditivos = tb_aditivos.query.order_by(tb_aditivos.data_aditivo)\
-        .filter(tb_aditivos.cod_contrato == id)
-    nomes_arquivos = [arquivo.arquivo_contrato_arquivo for arquivo in contrato_arquivos]
-    form = frm_visualizar_contrato()
-    form.cod_cliente.data = contrato.cod_cliente
-    form.obj_contrato.data = contrato.obj_contrato
-    form.datavalidade_contrato.data = contrato.datavalidade_contrato
-    form.status_contrato.data = contrato.status_contrato
-    return render_template('visualizarContrato.html', titulo='Visualizar Contrato', id=id, form=form,nomes_arquivos=nomes_arquivos,contrato_arquivos=contrato_arquivos,aditivos=aditivos)   
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: editarContrato
-##FUNÇÃO: formulário de edição
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/editarContrato/<int:id>')
-def editarContrato(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('editarContrato')))  
-    contrato = tb_contratos.query.filter_by(cod_contrato=id).first()
-    form = frm_editar_contrato()
-    form.cod_cliente.data = contrato.cod_cliente
-    form.obj_contrato.data = contrato.obj_contrato
-    form.datavalidade_contrato.data = contrato.datavalidade_contrato
-    form.status_contrato.data = contrato.status_contrato
-    return render_template('editarContrato.html', titulo='Editar Contrato', id=id, form=form)   
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: atualizarContrato
-#FUNÇÃO: alterar informações no banco de dados
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/atualizarContrato', methods=['POST',])
-def atualizarContrato():
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('atualizarContrato')))      
-    form = frm_editar_contrato(request.form)
-    if form.validate_on_submit():
-        id = request.form['id']
-        contrato = tb_contratos.query.filter_by(cod_contrato=request.form['id']).first()
-        contrato.cod_cliente = form.cod_cliente.data
-        contrato.obj_contrato = form.obj_contrato.data
-        contrato.datavalidade_contrato = form.datavalidade_contrato.data
-        contrato.status_contrato = form.status_contrato.data
-        db.session.add(contrato)
-        db.session.commit()
-        flash('Contrato atualizado com sucesso!','success')
-    else:
-        flash('Favor verificar os campos!','danger')
-    return redirect(url_for('visualizarContrato', id=request.form['id']))
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: novoContratoArquivo
-#FUNÇÃO: inclusão de arquivos banco de dados
-#PODE ACESSAR: administrador
-#--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/novoContratoArquivo/<int:id>')
-def novoContratoArquivo(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('novoSolicitacaoFoto'))) 
-    form = frm_editar_contrato_arquivo()
-    return render_template('novoContratoArquivo.html', titulo='Inserir imagens', form=form, id=id)
-
-@app.route('/contrato_arquivo/<int:id>', methods=['POST'])
-def contrato_arquivo(id):
-    arquivo = request.files['arquivo_contrato_arquivo']
-    nome_arquivo = secure_filename(arquivo.filename)
-    nome_base, extensao = os.path.splitext(nome_arquivo)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
-    nome_unico = f"{nome_base}_{timestamp}{extensao}"
-    caminho_arquivo = os.path.join(app.config['UPLOAD_PATH'], nome_unico)
-    arquivo.save(caminho_arquivo)
-
-    flash('Arquivo carregado com sucesso!','success')
-    novoContratoArquivo = tb_contrato_arquivos(cod_contrato=id,arquivo_contrato_arquivo=nome_unico)
-    db.session.add(novoContratoArquivo)
-    db.session.commit()
-    return redirect(url_for('novoContratoArquivo',id=id))
-
-
-@app.route('/excluirArquivo/<int:id>')
-def excluirArquivo(id):
-    arquivo_foto = tb_contrato_arquivos.query.filter_by(cod_contrato_arquivo=id).first()
-    idcontrato = arquivo_foto.cod_solicitacao
-    caminho_arquivo = os.path.join(app.config['UPLOAD_PATH'], arquivo_foto.arquivo_contrato_arquivo)
-    try:
-        os.remove(caminho_arquivo)
-        msg = "Arquivo excluído com sucesso!"
-    except Exception as e:
-        msg = f"Ocorreu um erro ao excluir o arquivo: {e}"
-
-    apagarArqvuio = tb_contrato_arquivos.query.filter_by(cod_contrato_arquivo=id).one()
-    db.session.delete(apagarArqvuio)
-    db.session.commit()
-
-    flash('Arquivo apagado com sucesso!','success')
-    return redirect(url_for('visualizarContrato',id=idcontrato))
-
-
-##################################################################################################################################
-#ADITIVOS
-##################################################################################################################################
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: novoAditivo
-#FUNÇÃO: formulario de inclusão
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/novoAditivo/<int:id>')
-def novoAditivo(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('novoAditivo'))) 
-    form = frm_editar_aditivo()
-    return render_template('novoAditivo.html', titulo='Novo Aditivo', form=form,id=id)
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: criarAditivo
-#FUNÇÃO: inclusão no banco de dados
-#PODE ACESSAR: administrador
-#--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/criarAditivo/<int:id>', methods=['POST',])
-def criarAditivo(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('criarAditivo')))     
-    form = frm_editar_aditivo(request.form)
-    if not form.validate_on_submit():
-        flash('Por favor, preencha todos os dados','danger')
-        return redirect(url_for('criarContrato'))
-    cod_contrato  = id
-    desc_aditivo = form.desc_aditivo.data
-    data_aditivo = form.data_aditivo.data
-    status_aditivo = form.status_aditivo.data
-    aditivo = tb_aditivos.query.filter_by(desc_aditivo=desc_aditivo).first()
-    if aditivo:
-        flash ('Aditivo já existe','danger')
-        return redirect(url_for('aditivo')) 
-    novoAditivo = tb_aditivos(cod_contrato=cod_contrato,\
-                            desc_aditivo = desc_aditivo,\
-                            data_aditivo = data_aditivo,\
-                            status_aditivo=status_aditivo)
-    flash('Aditivo criado com sucesso!','success')
-    db.session.add(novoAditivo)
-    db.session.commit()
-    return redirect(url_for('visualizarContrato',id=id))
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: visualizarAditivo
-#FUNÇÃO: formulario de visualização
-#PODE ACESSAR: administrador
-#--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/visualizarAditivo/<int:id>')
-def visualizarAditivo(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('visualizarAditivo')))  
-    aditivo = tb_aditivos.query.filter_by(cod_aditivo=id).first()
-    idcontrato = aditivo.cod_contrato
-    form = frm_visualizar_aditivo()
-    form.desc_aditivo.data = aditivo.desc_aditivo
-    form.data_aditivo.data = aditivo.data_aditivo
-    form.status_aditivo.data = aditivo.status_aditivo
-    return render_template('visualizarAditivo.html', titulo='Visualizar Aditivo', id=id, form=form, idcontrato=idcontrato)   
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: editarAditivo
-##FUNÇÃO: formulário de edição
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/editarAditivo/<int:id>')
-def editarAditivo(id):
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('editarAditivo')))  
-    aditivo = tb_aditivos.query.filter_by(cod_aditivo=id).first()
-    idcontrato = aditivo.cod_contrato
-    form = frm_editar_aditivo()
-    form.desc_aditivo.data = aditivo.desc_aditivo
-    form.data_aditivo.data = aditivo.data_aditivo
-    form.status_aditivo.data = aditivo.status_aditivo
-    return render_template('editarAditivo.html', titulo='Editar Aditivo', id=id, form=form)   
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#ROTA: atualizarAditivo
-#FUNÇÃO: alterar informações no banco de dados
-#PODE ACESSAR: administrador
-#---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/atualizarAditivo', methods=['POST',])
-def atualizarAditivo():
-    if 'usuario_logado' not in session or session['usuario_logado'] == None:
-        flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('atualizarAditivo')))      
-    form = frm_editar_aditivo(request.form)
-    if form.validate_on_submit():
-        id = request.form['id']
-        aditivo = tb_aditivos.query.filter_by(cod_aditivo=id).first()
-        aditivo.desc_aditivo = form.desc_aditivo.data
-        aditivo.data_aditivo = form.data_aditivo.data
-        aditivo.status_aditivo = form.status_aditivo.data
-        db.session.add(aditivo)
-        db.session.commit()
-        flash('Aditivo atualizado com sucesso!','success')
-    else:
-        flash('Favor verificar os campos!','danger')
-    return redirect(url_for('visualizarAditivo', id=request.form['id']))
+    return redirect(url_for('visualizarProjeto', id=request.form['id']))

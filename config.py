@@ -1,6 +1,6 @@
 import os
 
-SECRET_KEY = 'cidadepartificpativa2023'
+SECRET_KEY = 'PROJETOS2023'
 
 
 # conexão com o banco de dados mysql
@@ -10,7 +10,7 @@ SQLALCHEMY_DATABASE_URI = \
         usuario ='root',
         senha = '12345',
         servidor ='localhost',
-        database ='db_gerenciadorcontratos')
+        database ='db_gerenciadorprojetos')
 
 #CAMINHO DO UPLOAD (SE DISPONIVEL)
 UPLOAD_PATH = os.path.dirname(os.path.abspath(__file__)) + '/static/upload/'
@@ -19,4 +19,4 @@ UPLOAD_PATH = os.path.dirname(os.path.abspath(__file__)) + '/static/upload/'
 ROWS_PER_PAGE = 10
 
 #CHAVE DE CRIPTOGRAFIA
-CHAVE = "GERENCIADOR2023"
+CHAVE = "PROJETOS2023"

@@ -1,7 +1,7 @@
 #importações
 import os
 from gerenciadorprojetos import app, db
-from models import tb_user, tb_usertype,tb_clientes
+from models import tb_user, tb_usertype
 from flask_wtf import FlaskForm
 from wtforms import Form, StringField, validators, SubmitField,IntegerField, SelectField,PasswordField,DateField,EmailField,BooleanField,RadioField, TextAreaField, TimeField, TelField, DateTimeLocalField,FloatField, DecimalField,FileField
 
@@ -86,7 +86,7 @@ class frm_visualizar_tipousuario(FlaskForm):
     salvar = SubmitField('Salvar')    
 
 ##################################################################################################################################
-#CLIENTES
+#PROJETOS
 ##################################################################################################################################
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -94,17 +94,13 @@ class frm_visualizar_tipousuario(FlaskForm):
 #TIPO: edição
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
-class frm_editar_cliente(FlaskForm):
-    nomerazao_cliente = StringField('Razão Social:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite a razão social do cliente"})
-    nomefantasia_cliente = StringField('Nome Fantasia:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o nome fantasoa do cliente"})
-    end_cliente = StringField('Endereço:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o endereço do cliente"})
-    numend_cliente = StringField('Nº:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o número do endereço do cliente"})
-    bairro_cliente = StringField('Bairro:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o bairro do cliente"})
-    cidade_cliente = StringField('Cidade:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite a cidade do cliente"})
-    uf_cliente = StringField('Uf:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite a uf cliente"})
-    complemento_cliente = StringField('Complemento:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o complemento do endereço do cliente"})
-    cnpj_cliente = StringField('CNPJ:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o cnpj do cliente"})
-    status = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
+class frm_editar_projeto(FlaskForm):
+    nome_projeto = StringField('Nome:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o nome do projeto"})
+    datainicio_projeto = DateField('Início:')
+    datafim_projeto = DateField('Final:',)
+    desc_projeto = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
+    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()])
+    status_projeto = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
     salvar = SubmitField('Salvar')    
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -112,82 +108,12 @@ class frm_editar_cliente(FlaskForm):
 #TIPO: visualização
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
-class frm_visualizar_cliente(FlaskForm):
-    nomerazao_cliente = StringField('Razão Social:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    end_cliente = StringField('Endereço:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    numend_cliente = StringField('Nº:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    bairro_cliente = StringField('Bairro:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    cidade_cliente = StringField('Cidade:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    uf_cliente = StringField('Uf:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    complemento_cliente = StringField('Complemento:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    cnpj_cliente = StringField('CNPJ:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    status = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+class frm_visualizar_projeto(FlaskForm):
+    nome_projeto = StringField('Nome:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    datainicio_projeto = DateField('Inicío:', render_kw={'readonly': True})
+    datafim_projeto = DateField('Final:', render_kw={'readonly': True})
+    desc_projeto = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
+    status_projeto = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
     salvar = SubmitField('Salvar')        
 
-
-##################################################################################################################################
-#CONTRATO
-##################################################################################################################################
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: contrato
-#TIPO: edição
-#TABELA: tb_contrato
-#---------------------------------------------------------------------------------------------------------------------------------
-class frm_editar_contrato(FlaskForm):
-    cod_cliente = SelectField('Cliente:', coerce=int,  choices=[(g.cod_cliente, g.nomerazao_cliente) for g in tb_clientes.query.order_by('nomerazao_cliente')])
-    obj_contrato = StringField('Objeto:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o nome do evento"})
-    datavalidade_contrato = DateField('Validade:', render_kw={"placeholder": "digite o ano do evento"})
-    status_contrato = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
-    salvar = SubmitField('Salvar')    
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: contrato
-#TIPO: visualização
-#TABELA: tb_contrato
-#---------------------------------------------------------------------------------------------------------------------------------
-class frm_visualizar_contrato(FlaskForm):
-    cod_cliente = SelectField('Cliente:', coerce=int,  choices=[(g.cod_cliente, g.nomerazao_cliente) for g in tb_clientes.query.order_by('nomerazao_cliente')], render_kw={'readonly': True})
-    obj_contrato = StringField('Objeto:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    datavalidade_contrato = DateField('Validade:', render_kw={'readonly': True})
-    status_contrato = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
-    salvar = SubmitField('Salvar')
-
-##################################################################################################################################
-#CONTRATO / ARQUIVO
-##################################################################################################################################
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: contrato / arquivo
-#TIPO: edição
-#TABELA: tb_contrato_arquivo
-#---------------------------------------------------------------------------------------------------------------------------------
-class frm_editar_contrato_arquivo(FlaskForm):
-    arquivo_contrato_arquivo = FileField('Arquivo:', [validators.DataRequired()], render_kw={"placeholder": "selecionar imagem"})
-    salvar = SubmitField('Salvar')
-
-##################################################################################################################################
-#ADITIVOS
-##################################################################################################################################
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: aditivo
-#TIPO: edição
-#TABELA: tb_aditivos
-#---------------------------------------------------------------------------------------------------------------------------------
-class frm_editar_aditivo(FlaskForm):
-    desc_aditivo = StringField('Objeto:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o descritivo do aditivo"})
-    data_aditivo = DateField('Data:', render_kw={"placeholder": "digite a data do aditivo"})
-    status_aditivo = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
-    salvar = SubmitField('Salvar')    
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: aditivo
-#TIPO: visualização
-#TABELA: tb_aditivos
-#---------------------------------------------------------------------------------------------------------------------------------
-class frm_visualizar_aditivo(FlaskForm):
-    desc_aditivo = StringField('Objeto:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    data_aditivo = DateField('Data:', render_kw={'readonly': True})
-    status_aditivo = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
-    salvar = SubmitField('Salvar')

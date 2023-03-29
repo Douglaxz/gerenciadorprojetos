@@ -28,58 +28,52 @@ class tb_usertype(db.Model):
         return '<Name %r>' % self.name    
  
 #---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: CLIENTES
+#TABELA: PROJETOS
 #ORIGEM: BANCO DE DADOS
 #---------------------------------------------------------------------------------------------------------------------------------
-class tb_clientes(db.Model):
-    cod_cliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nomerazao_cliente = db.Column(db.String(50), nullable=False)
-    nomefantasia_cliente = db.Column(db.String(50), nullable=False)
-    end_cliente = db.Column(db.String(50), nullable=False)
-    numend_cliente = db.Column(db.String(50), nullable=False)
-    bairro_cliente = db.Column(db.String(50), nullable=False)
-    cidade_cliente = db.Column(db.String(50), nullable=False)
-    uf_cliente = db.Column(db.String(50), nullable=False)
-    complemento_cliente = db.Column(db.String(50), nullable=False)
-    cnpj_cliente = db.Column(db.String(50), nullable=False)
-    status_cliente = db.Column(db.Integer, nullable=False)
-    def __repr__(self):
-        return '<Name %r>' % self.name    
-
-
-#---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: CONTRATOS
-#ORIGEM: BANCO DE DADOS
-#---------------------------------------------------------------------------------------------------------------------------------
-class tb_contratos(db.Model):
-    cod_contrato = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    cod_cliente = db.Column(db.Integer, nullable=False)
-    obj_contrato = db.Column(db.String(50), nullable=False)
-    datavalidade_contrato = db.Column(db.Date, nullable=False)
-    status_contrato = db.Column(db.Integer, nullable=False)
+class tb_projetos(db.Model):
+    cod_projeto = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nome_projeto = db.Column(db.String(50), nullable=False)
+    datainicio_projeto = db.Column(db.Date, nullable=False)
+    datafim_projeto = db.Column(db.Date, nullable=False)
+    desc_projeto = db.Column(db.String(50), nullable=False)
+    cod_usuario = db.Column(db.Integer, nullable=False)
+    status_projeto = db.Column(db.Integer, nullable=False)
     def __repr__(self):
         return '<Name %r>' % self.name
     
-#---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: CONTRATOS_ARQUIVOS
-#ORIGEM: BANCO DE DADOS
-#---------------------------------------------------------------------------------------------------------------------------------
-class tb_contrato_arquivos(db.Model):
-    cod_contrato_arquivo = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    cod_contrato = db.Column(db.Integer, nullable=False)
-    arquivo_contrato_arquivo = db.Column(db.String(50), nullable=False)
-    def __repr__(self):
-        return '<Name %r>' % self.name    
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: CONTRATOS_ARQUIVOS
+#TABELA: PROJETOS
 #ORIGEM: BANCO DE DADOS
 #---------------------------------------------------------------------------------------------------------------------------------
-class tb_aditivos(db.Model):
-    cod_aditivo = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    cod_contrato = db.Column(db.Integer, nullable=False)
-    desc_aditivo = db.Column(db.String(50), nullable=False)
-    data_aditivo = db.Column(db.Date, nullable=False)
-    status_aditivo = db.Column(db.Integer, nullable=False)
+class tb_projetos(db.Model):
+    cod_projeto = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nome_projeto = db.Column(db.String(50), nullable=False)
+    datainicio_projeto = db.Column(db.Date, nullable=False)
+    datafim_projeto = db.Column(db.Date, nullable=False)
+    desc_projeto = db.Column(db.String(50), nullable=False)
+    cod_usuario = db.Column(db.Integer, nullable=False)
+    status_projeto = db.Column(db.Integer, nullable=False)
     def __repr__(self):
         return '<Name %r>' % self.name
+
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#TABELA: PROJETOS
+#ORIGEM: BANCO DE DADOS
+#---------------------------------------------------------------------------------------------------------------------------------
+class tb_backlog(db.Model):
+    cod_backlog = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    desc_backlog = db.Column(db.String(50), nullable=False)
+    prioridade_backlog = db.Column(db.Integer, nullable=False)
+    estimativa_backlog = db.Column(db.Integer, nullable=False)
+    dependencias_backlog = db.Column(db.String(50), nullable=False)
+    criterios_backlog = db.Column(db.String(500), nullable=False)
+    datacriacao_backlog = db.Column(db.Date, nullable=False)
+    dataconclusao_backlog = db.Column(db.Date, nullable=False)
+    obs_backlog = db.Column(db.String(500), nullable=False)    
+    status_backlog = db.Column(db.Integer, nullable=False)
+    def __repr__(self):
+        return '<Name %r>' % self.name
+    
