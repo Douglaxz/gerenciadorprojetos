@@ -127,16 +127,16 @@ class frm_visualizar_projeto(FlaskForm):
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
 class frm_editar_backlog(FlaskForm):
-    desc_backlog = StringField('Tarefa:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={"placeholder": "digite o nome do projeto"})
+    titulo_backlog = StringField('Título:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o nome do projeto"})
+    desc_backlog = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o nome do projeto"})
     datacriacao_backlog = DateField('Data início:')
-    dataconclusao_backlog = DateField('Data conclusão:',)
+    dataconclusao_backlog = DateField('Data conclusão:')
     obs_backlog = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
-    cod_projeto = SelectField('Tipo:', coerce=int, choices=[(g.cod_projeto, g.nome_projeto) for g in tb_projetos.query.all()])
     status_backlog = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
-    estimativa_backlog = DecimalField('Situação:')
-    dependencias_backlog = TextAreaField('Dependências:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
-    criterios_backlog = TextAreaField('Critérios de aceitação:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
-    esforco_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')])
+    estimativa_backlog = DecimalField('Tempo estimado em horas:')
+    dependencias_backlog = TextAreaField('Dependências de outros backlogs:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite se houver dependencia de outros backlogs para conclusão"})
+    criterios_backlog = TextAreaField('Critérios de aceitação:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite os critérios de aceitação do backlog"})
+    esforco_backlog = SelectField('Matriz esforço valor:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')])
     prioridade_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
     salvar = SubmitField('Salvar')    
 
@@ -146,16 +146,16 @@ class frm_editar_backlog(FlaskForm):
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
 class frm_visualizar_backlog(FlaskForm):
-    desc_backlog = StringField('Tarefa:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    datacriacao_backlog = DateField('Inicío:', render_kw={'readonly': True})
-    dataconclusao_backlog = DateField('Final:', render_kw={'readonly': True})
-    obs_backlog = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    cod_projeto = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
+    titulo_backlog = StringField('Título:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    desc_backlog = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
+    datacriacao_backlog = DateField('Data início:', render_kw={'readonly': True})
+    dataconclusao_backlog = DateField('Data conclusão:', render_kw={'readonly': True})
+    obs_backlog = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
     status_backlog = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
-    estimativa_backlog = DecimalField('Situação:', render_kw={'readonly': True})
-    dependencias_backlog = TextAreaField('Dependências:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
+    estimativa_backlog = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
+    dependencias_backlog = TextAreaField('Dependências de outros backlogs:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
     criterios_backlog = TextAreaField('Critérios de aceitação:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
-    esforco_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')], render_kw={'readonly': True})
+    esforco_backlog = SelectField('Matriz esforço valor:', coerce=int, choices=[(0, 'Esforço Baixo - Valor Baixo'),(1, 'Esforço Baixo - Valor Alto'),(2, 'Esforço Alto - Valor Baixo'),(3, 'Esforço Alto - Valor Alto')], render_kw={'readonly': True})
     prioridade_backlog = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])    
     salvar = SubmitField('Salvar')        
 

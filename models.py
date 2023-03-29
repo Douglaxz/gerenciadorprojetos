@@ -49,7 +49,7 @@ class tb_projetos(db.Model):
 #---------------------------------------------------------------------------------------------------------------------------------
 class tb_backlogs(db.Model):
     cod_backlog = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    desc_backlog = db.Column(db.String(50), nullable=False)
+    desc_backlog = db.Column(db.String(500), nullable=False)
     prioridade_backlog = db.Column(db.Integer, nullable=False)
     estimativa_backlog = db.Column(db.Integer, nullable=False)
     dependencias_backlog = db.Column(db.String(50), nullable=False)
@@ -60,6 +60,7 @@ class tb_backlogs(db.Model):
     status_backlog = db.Column(db.Integer, nullable=False)
     esforco_backlog = db.Column(db.Integer, nullable=False)
     cod_projeto = db.Column(db.Integer, nullable=False)
+    titulo_backlog = db.Column(db.String(45), nullable=False)
     def __repr__(self):
         return '<Name %r>' % self.name
     

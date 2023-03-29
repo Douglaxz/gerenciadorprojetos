@@ -32,6 +32,24 @@ footer, header, hgroup, menu, nav, section {
     display: block;
 }
 
+.card_backlog {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.card-header_backlog {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-body_backlog {
+  font-size: 1em;
+}
+
+
 .navbar-default {
     background: linear-gradient(90deg, #4d7cfe,#4d7cfe,#4d7cfe,#4d7cfe);
     display: flex;
@@ -365,7 +383,7 @@ div.op2 {
 
 .card__info {
     font-size: 1rem;
-    margin-left: 30%;
+    margin-left: 10%;
 
 }
 

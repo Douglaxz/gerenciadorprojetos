@@ -527,6 +527,7 @@ def visualizarProjeto(id):
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('visualizarProjeto')))  
     projeto = tb_projetos.query.filter_by(cod_projeto=id).first()
+    backlogs = tb_backlogs.query.filter_by(cod_projeto=id).all()
     form = frm_visualizar_projeto()
     form.nome_projeto.data = projeto.nome_projeto
     form.datainicio_projeto.data = projeto.datainicio_projeto
@@ -534,7 +535,7 @@ def visualizarProjeto(id):
     form.desc_projeto.data = projeto.desc_projeto
     form.cod_usuario.data = projeto.cod_usuario
     form.status_projeto.data = projeto.status_projeto
-    return render_template('visualizarProjeto.html', titulo='Visualizar Projeto', id=id, form=form)   
+    return render_template('visualizarProjeto.html', titulo='Visualizar Projeto', id=id, form=form, backlogs=backlogs)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: editarProjeto
@@ -592,13 +593,13 @@ def atualizarProjeto():
 #FUNÇÃO: formulario de inclusão
 #PODE ACESSAR: administrador
 #---------------------------------------------------------------------------------------------------------------------------------
-@app.route('/novoBacklog')
-def novoProjeto():
+@app.route('/novoBacklog/<int:id>')
+def novoBacklog(id):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('novoBacklog'))) 
-    form = frm_editar_projeto()
-    return render_template('novoBacklog.html', titulo='Novo Backlog', form=form)
+    form = frm_editar_backlog()
+    return render_template('novoBacklog.html', titulo='Novo Backlog', form=form,id=id)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: criarBacklog
@@ -607,44 +608,45 @@ def novoProjeto():
 #--------------------------------------------------------------------------------------------------------------------------------- 
 @app.route('/criarBacklog', methods=['POST',])
 def criarBacklog():
+    id = request.form['id']
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
-        return redirect(url_for('login',proxima=url_for('criarBacklog')))     
+        return redirect(url_for('login',proxima=url_for('novoBacklog',id=id)))     
     form = frm_editar_backlog(request.form)
     if not form.validate_on_submit():
         flash('Por favor, preencha todos os dados','danger')
-        return redirect(url_for('criarBacklog'))
+        return redirect(url_for('novoBacklog',id=id))
+    titulo_backlog  = form.titulo_backlog.data
     desc_backlog  = form.desc_backlog.data
     datacriacao_backlog = form.datacriacao_backlog.data
+    dataconclusao_backlog = form.dataconclusao_backlog.data
     prioridade_backlog = form.prioridade_backlog.data
     estimativa_backlog = form.estimativa_backlog.data
     dependencias_backlog = form.dependencias_backlog.data
     datacriacao_backlog = form.datacriacao_backlog.data
-    dataconclusao_backlog = form.obs_backlog.data
     esforco_backlog = form.esforco_backlog.data
     status_backlog = form.status_backlog.data
     obs_backlog = form.obs_backlog.data
-    cod_projeto = form.cod_projeto.data
+    cod_projeto = id
     backlog = tb_backlogs.query.filter_by(desc_backlog=desc_backlog).first()
-    if projeto:
-        flash ('Projeto já existe','danger')
-        return redirect(url_for('cliente')) 
-    backlog = tb_backlogs(desc_backlog=desc_backlog,\
+    if backlog:
+        flash ('Blacklog já existe','danger')
+        return redirect(url_for('visualizarProjeto',id=id)) 
+    novoBacklog = tb_backlogs(desc_backlog=desc_backlog,\
+                            titulo_backlog = titulo_backlog,\
                             datacriacao_backlog = datacriacao_backlog,\
-                            datafim_projeto = datafim_projeto,\
+                            dataconclusao_backlog = dataconclusao_backlog,\
                             prioridade_backlog = prioridade_backlog,\
                             estimativa_backlog = estimativa_backlog,\
                             dependencias_backlog = dependencias_backlog,\
-                            datacriacao_backlog = datacriacao_backlog,\
-                            dataconclusao_backlog = dataconclusao_backlog,\
                             esforco_backlog = esforco_backlog,\
                             obs_backlog = obs_backlog,\
                             cod_projeto = cod_projeto,\
                             status_backlog=status_backlog)
-    flash('Projeto criado com sucesso!','success')
-    db.session.add(novoProjeto)
+    flash('Bakclog criado com sucesso!','success')
+    db.session.add(novoBacklog)
     db.session.commit()
-    return redirect(url_for('projeto'))
+    return redirect(url_for('visualizarProjeto',id=id))
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: visualizarBacklog
@@ -659,6 +661,7 @@ def visualizarBacklog(id):
     backlog = tb_backlogs.query.filter_by(cod_backlog=id).first()
     form = frm_visualizar_backlog()
     form.desc_backlog.data = backlog.desc_backlog
+    form.titulo_backlog.data = backlog.titulo_backlog
     form.datacriacao_backlog.data = backlog.datacriacao_backlog
     form.prioridade_backlog.data = backlog.prioridade_backlog
     form.estimativa_backlog.data = backlog.estimativa_backlog
@@ -683,6 +686,7 @@ def editarBacklog(id):
         return redirect(url_for('login',proxima=url_for('editarBacklog')))  
     backlog = tb_backlogs.query.filter_by(cod_backlog=id).first()
     form = frm_editar_backlog()
+    form.titulo_backlog.data = backlog.titulo_backlog
     form.desc_backlog.data = backlog.desc_backlog
     form.datacriacao_backlog.data = backlog.datacriacao_backlog
     form.prioridade_backlog.data = backlog.prioridade_backlog
@@ -710,6 +714,7 @@ def atualizarBacklog():
     if form.validate_on_submit():
         id = request.form['id']
         backlog = tb_backlogs.query.filter_by(cod_backlog=request.form['id']).first()
+        backlog.titulo_backlog = form.titulo_backlog.data
         backlog.desc_backlog = form.desc_backlog.data
         backlog.prioridade_backlog = form.prioridade_backlog.data
         backlog.estimativa_backlog = form.estimativa_backlog.data
