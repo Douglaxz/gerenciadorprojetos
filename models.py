@@ -65,11 +65,11 @@ class tb_backlogs(db.Model):
         return '<Name %r>' % self.name
     
 #---------------------------------------------------------------------------------------------------------------------------------
-#TABELA: PROJETOS
+#TABELA: TAREFAS
 #ORIGEM: BANCO DE DADOS
 #---------------------------------------------------------------------------------------------------------------------------------
 class tb_tarefas(db.Model):
-    cod_tarefas = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    cod_tarefa = db.Column(db.Integer, primary_key=True, autoincrement=True)
     titulo_tarefa = db.Column(db.String(45), nullable=False)
     descricao_tarefa = db.Column(db.String(500), nullable=False)
     prioridade_tarefa = db.Column(db.Integer, nullable=False)
@@ -80,5 +80,21 @@ class tb_tarefas(db.Model):
     status_tarefa = db.Column(db.Integer, nullable=False)
     cod_usuario = db.Column(db.Integer, nullable=False)
     cod_backlog = db.Column(db.Integer, nullable=False)    
+    cod_sprint = db.Column(db.Integer, nullable=False)    
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#TABELA: TAREFAS
+#ORIGEM: BANCO DE DADOS
+#---------------------------------------------------------------------------------------------------------------------------------
+class tb_sprints(db.Model):
+    cod_sprint = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    num_sprint = db.Column(db.Integer, nullable=False)
+    datainicio_sprint = db.Column(db.Date, nullable=False)
+    datafinalsprint_sprint = db.Column(db.Date, nullable=False)
+    status_sprint = db.Column(db.Integer, nullable=False)
+    cod_projeto = db.Column(db.Integer, nullable=False)
     def __repr__(self):
         return '<Name %r>' % self.name

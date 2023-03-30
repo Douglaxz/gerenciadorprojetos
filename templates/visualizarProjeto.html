@@ -43,7 +43,7 @@
   </div>
 </div>
 <div class="boxcentral">
-  {% for backlog in backlogs%}
+{% for backlog in backlogs%}
   <a class="btn" href="{{url_for('visualizarBacklog',id=backlog.cod_backlog,idprojeto=id)}}">
   <div class="cards__lista">
     <div class="card__info">
@@ -63,7 +63,26 @@
     <i class="bi bi-bag" data-toggle="tooltip" data-placement="right"></i> Sprints
   </div>
   <div class="box_botoes">
-    <a class="btn btn_titulo" href="{{url_for('novoBacklog',id=id)}}"><i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i></a>
+    <a class="btn btn_titulo" href="{{url_for('novoSprint',id=id)}}"><i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i></a>
   </div>
+</div>
+<div class="boxcentral">
+  {% for sprint in sprints%}
+  <a class="btn" href="{{url_for('visualizarSprint',id=sprint.cod_sprint,idprojeto=id)}}">
+    <div class="cards__lista">
+      <div class="card__info">
+        <div class="card-header_backlog">
+          <h2>{{ sprint.num_sprint }}</h2>
+        </div>   
+        <div class="card-body_backlog">
+          <p>Início: {{ sprint.datainicio_sprint.strftime('%d/%m/%Y') }}</p>
+        </div> 
+        <div class="card-body_backlog">
+          <p>Fim: {{ sprint.datafinalsprint_sprint.strftime('%d/%m/%Y') }}</p>
+        </div>         
+    </div>    
+  </div>
+  </a>
+{% endfor %}
 </div>
 {% endblock%}

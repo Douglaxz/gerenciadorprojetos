@@ -1,7 +1,7 @@
 #importações
 import os
 from gerenciadorprojetos import app, db
-from models import tb_user, tb_usertype, tb_projetos, tb_backlogs
+from models import tb_user, tb_usertype, tb_projetos, tb_backlogs, tb_tarefas
 from flask_wtf import FlaskForm
 from wtforms import Form, StringField, validators, SubmitField,IntegerField, SelectField,PasswordField,DateField,EmailField,BooleanField,RadioField, TextAreaField, TimeField, TelField, DateTimeLocalField,FloatField, DecimalField,FileField
 
@@ -178,7 +178,7 @@ class frm_editar_tarefa(FlaskForm):
     status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
     estimativa_tarefa = DecimalField('Tempo estimado em horas:')
     prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
-    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
+    cod_usuario = SelectField('Responsável:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()])
     salvar = SubmitField('Salvar')    
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -195,5 +195,51 @@ class frm_visualizar_tarefa(FlaskForm):
     status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
     estimativa_tarefa = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
     prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
-    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})    
+    cod_usuario = SelectField('Responsável:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})    
     salvar = SubmitField('Salvar') 
+
+##################################################################################################################################
+#SPRINT
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: sprint
+#TIPO: edição
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_editar_sprint(FlaskForm):
+    num_sprint = DecimalField('Número da sprint:')
+    datainicio_sprint = DateField('Data início:')
+    datafinalsprint_sprint = DateField('Data conclusão:')
+    status_sprint = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])    
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: sprint
+#TIPO: visualização
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_visualizar_sprint(FlaskForm):
+    num_sprint = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
+    datainicio_sprint = DateField('Data início:', render_kw={'readonly': True})
+    datafinalsprint_sprint = DateField('Data conclusão:', render_kw={'readonly': True})
+    status_sprint = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+
+##################################################################################################################################
+#SPRINT / TAREFA
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: sprint
+#TIPO: edição
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_editar_sprint_tarefa(FlaskForm):
+    cod_tarefa = SelectField('Tarefa:', coerce=int, choices=[(g.cod_tarefa, g.titulo_tarefa) for g in tb_tarefas.query.all()])    
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: sprint
+#TIPO: visualização
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_visualizar_sprint_tarefa(FlaskForm):
+    cod_tarefa = SelectField('Tarefa:', coerce=int, choices=[(g.cod_tarefa, g.titulo_tarefa) for g in tb_tarefas.query.all()], render_kw={'readonly': True})    

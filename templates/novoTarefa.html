@@ -1,0 +1,50 @@
+{% extends 'template.html' %}
+{% block conteudo %}
+  <form method="post" action="{{ url_for('criarTarefa') }}" enctype="multipart/form-data" id="formulario">
+    <div class="box_cabecalho">
+      <div class="box_titulo_interno">
+        <i class="bi bi-list-task" data-toggle="tooltip" data-placement="right" title="Tipo Usuários"></i> {{ titulo }}
+      </div>
+      <div class="box_botoes">
+        <a class="btn btn_titulo" href="#" onclick="myFunction()"><i class="bi bi-save" style="font-size:1.5rem; color:white;"></i></a>
+      </div>
+      <div class="box_botoes">
+        <a class="btn btn_titulo" href="{{ url_for('visualizarBacklog',id=id,idprojeto=idprojeto) }}"><i class="bi bi-reply" style="font-size:1.5rem; color:white;"></i></a>
+      </div>
+    </div>
+    <!-- conteudo -->
+    <div class="boxformulario">
+      <fieldset>
+        <input type="hidden" name="id" id="id" value="{{id}}">
+        {{ form.csrf_token() }}
+        <div class="form-group">{{ form.titulo_tarefa.label(class='form-label') }}
+          {{ form.titulo_tarefa(class='form-control') }}
+        </div>        
+        <div class="form-group">{{ form.descricao_tarefa.label(class='form-label') }}
+          {{ form.descricao_tarefa(class='form-control') }}
+        </div>
+        <div class="form-group">{{ form.datacriacao_tarefa.label(class='form-label') }}
+          {{ form.datacriacao_tarefa(class='form-control') }}
+        </div>        
+        <div class="form-group">{{ form.dataconclusao_tarefa.label(class='form-label') }}
+          {{ form.dataconclusao_tarefa(class='form-control') }}
+        </div>
+        <div class="form-group">{{ form.prioridade_tarefa.label(class='form-label') }}
+          {{ form.prioridade_tarefa(class='form-control') }}
+        </div>   
+        <div class="form-group">{{ form.estimativa_tarefa.label(class='form-label') }}
+          {{ form.estimativa_tarefa(class='form-control') }}
+        </div>
+        <div class="form-group">{{ form.cod_usuario.label(class='form-label') }}
+          {{ form.cod_usuario(class='form-control') }}
+        </div>        
+        <div class="form-group">{{ form.obs_tarefa.label(class='form-label') }}
+          {{ form.obs_tarefa(class='form-control') }}
+        </div>        
+        <div class="form-group">{{ form.status_tarefa.label(class='form-label') }}
+          {{ form.status_tarefa(class='form-control') }}
+        </div>                                                                         
+      </fieldset>
+    </div>
+  </form>
+{% endblock %}

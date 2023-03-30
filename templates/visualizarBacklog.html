@@ -57,4 +57,20 @@
     <a class="btn btn_titulo" href="{{url_for('novoTarefa',id=id)}}"><i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i></a>
   </div>
 </div>
+<div class="boxcentral">
+  {% for tarefa in tarefas%}
+  <a class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
+  <div class="cards__lista">
+    <div class="card__info">
+      <div class="card-header_backlog">
+        <h2>{{ tarefa.titulo_tarefa }}</h2>
+      </div>   
+      <div class="card-body_backlog">
+        <p>{{ tarefa.descricao_tarefa }}</p>
+      </div>  
+  </div>    
+</div>
+</a>
+{% endfor %}
+</div>
 {% endblock%}
