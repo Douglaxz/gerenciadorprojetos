@@ -12,7 +12,8 @@ from sqlalchemy import func
 from models import tb_user,\
     tb_usertype,\
     tb_projetos,\
-    tb_backlogs
+    tb_backlogs,\
+    tb_tarefas
 from helpers import \
     frm_pesquisa, \
     frm_editar_senha,\
@@ -23,7 +24,9 @@ from helpers import \
     frm_visualizar_projeto,\
     frm_editar_projeto,\
     frm_visualizar_backlog,\
-    frm_editar_backlog    
+    frm_editar_backlog,\
+    frm_visualizar_tarefa,\
+    frm_editar_tarefa    
 
 # ITENS POR PÁGINA
 from config import ROWS_PER_PAGE, CHAVE
@@ -627,6 +630,7 @@ def criarBacklog():
     esforco_backlog = form.esforco_backlog.data
     status_backlog = form.status_backlog.data
     obs_backlog = form.obs_backlog.data
+    criterios_backlog = form.criterios_backlog.data
     cod_projeto = id
     backlog = tb_backlogs.query.filter_by(desc_backlog=desc_backlog).first()
     if backlog:
@@ -641,9 +645,10 @@ def criarBacklog():
                             dependencias_backlog = dependencias_backlog,\
                             esforco_backlog = esforco_backlog,\
                             obs_backlog = obs_backlog,\
+                            criterios_backlog = criterios_backlog,\
                             cod_projeto = cod_projeto,\
                             status_backlog=status_backlog)
-    flash('Bakclog criado com sucesso!','success')
+    flash('Backlog criado com sucesso!','success')
     db.session.add(novoBacklog)
     db.session.commit()
     return redirect(url_for('visualizarProjeto',id=id))
@@ -653,8 +658,8 @@ def criarBacklog():
 #FUNÇÃO: formulario de visualização
 #PODE ACESSAR: administrador
 #--------------------------------------------------------------------------------------------------------------------------------- 
-@app.route('/visualizarBacklog/<int:id>')
-def visualizarBacklog(id):
+@app.route('/visualizarBacklog/<int:id><int:idprojeto>')
+def visualizarBacklog(id,idprojeto):
     if 'usuario_logado' not in session or session['usuario_logado'] == None:
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('visualizarBacklog')))  
@@ -671,8 +676,9 @@ def visualizarBacklog(id):
     form.esforco_backlog.data = backlog.esforco_backlog
     form.status_backlog.data = backlog.status_backlog
     form.obs_backlog.data = backlog.obs_backlog
-    form.cod_projeto.data = backlog.cod_projeto
-    return render_template('visualizarBacklog.html', titulo='Visualizar Backlog', id=id, form=form)   
+    form.criterios_backlog.data = backlog.criterios_backlog
+    
+    return render_template('visualizarBacklog.html', titulo='Visualizar Backlog', id=id, form=form,idprojeto=idprojeto)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: editarBacklog
@@ -697,8 +703,10 @@ def editarBacklog(id):
     form.esforco_backlog.data = backlog.esforco_backlog
     form.status_backlog.data = backlog.status_backlog
     form.obs_backlog.data = backlog.obs_backlog
-    form.cod_projeto.data = backlog.cod_projeto
-    return render_template('editarBacklog.html', titulo='Editar Backlog', id=id, form=form)   
+    form.criterios_backlog.data = backlog.criterios_backlog
+    idprojeto = backlog.cod_projeto
+    
+    return render_template('editarBacklog.html', titulo='Editar Backlog', id=id, form=form, idprojeto=idprojeto)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: atualizarBacklog
@@ -713,6 +721,7 @@ def atualizarBacklog():
     form = frm_editar_backlog(request.form)
     if form.validate_on_submit():
         id = request.form['id']
+        idprojeto = request.form['idprojeto']
         backlog = tb_backlogs.query.filter_by(cod_backlog=request.form['id']).first()
         backlog.titulo_backlog = form.titulo_backlog.data
         backlog.desc_backlog = form.desc_backlog.data
@@ -724,11 +733,151 @@ def atualizarBacklog():
         backlog.dataconclusao_backlog = form.dataconclusao_backlog.data
         backlog.obs_backlog = form.obs_backlog.data
         backlog.status_backlog = form.status_backlog.data
-        backlog.esforco_backlog = form.esforco_backlog.data
-        backlog.cod_projeto = form.cod_projeto.data        
+        backlog.esforco_backlog = form.esforco_backlog.data 
+        backlog.criterios_backlog = form.criterios_backlog.data 
         db.session.add(backlog)
         db.session.commit()
         flash('Backlog atualizado com sucesso!','success')
     else:
         flash('Favor verificar os campos!','danger')
-    return redirect(url_for('visualizarBacklog', id=request.form['id']))
+    return redirect(url_for('visualizarBacklog', id=request.form['id'], idprojeto=idprojeto))
+
+##################################################################################################################################
+#TAREFAS
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: novoTarefa
+#FUNÇÃO: formulario de inclusão
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/novoTarefa/<int:id>')
+def novoTarefa(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('novoTarefa'))) 
+    form = frm_editar_backlog()
+    return render_template('novoTarefa.html', titulo='Novo Tarefa', form=form,id=id)
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: criarTarefa
+#FUNÇÃO: inclusão no banco de dados
+#PODE ACESSAR: administrador
+#--------------------------------------------------------------------------------------------------------------------------------- 
+@app.route('/criarTarefa', methods=['POST',])
+def criarTarefa():
+    id = request.form['id']
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('novoTarefa',id=id)))     
+    form = frm_editar_tarefa(request.form)
+    if not form.validate_on_submit():
+        flash('Por favor, preencha todos os dados','danger')
+        return redirect(url_for('novoTarefa',id=id))
+    titulo_tarefa  = form.titulo_tarefa.data
+    descricao_tarefa  = form.descricao_tarefa.data
+    datacriacao_tarefa= form.datacriacao_tarefa.data
+    dataconclusao_tarefa = form.dataconclusao_tarefa.data
+    prioridade_tarefa = form.prioridade_tarefa.data
+    estimativa_tarefa = form.estimativa_tarefa.data
+    status_tarefa = form.status_tarefa.data
+    obs_tarefa = form.obs_tarefa.data
+    cod_usuario = form.cod_usuario.data
+    tarefa = tb_tarefas.query.filter_by(descricao_tarefa=descricao_tarefa).first()
+    if tarefa:
+        flash ('Blacklog já existe','danger')
+        return redirect(url_for('visualizarProjeto',id=id)) 
+    novoTarefa = tb_backlogs(titulo_tarefa=titulo_tarefa,\
+                            descricao_tarefa = descricao_tarefa,\
+                            datacriacao_tarefa = datacriacao_tarefa,\
+                            dataconclusao_tarefa = dataconclusao_tarefa,\
+                            prioridade_tarefa = prioridade_tarefa,\
+                            estimativa_tarefa = estimativa_tarefa,\
+                            obs_tarefa = obs_tarefa,\
+                            cod_usuario = cod_usuario,\
+                            cod_backlog = id,\
+                            status_tarefa=status_tarefa)
+    flash('Tarefa criado com sucesso!','success')
+    db.session.add(novoTarefa)
+    db.session.commit()
+    return redirect(url_for('visualizarBacklog',id=id))
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: visualizarTarefa
+#FUNÇÃO: formulario de visualização
+#PODE ACESSAR: administrador
+#--------------------------------------------------------------------------------------------------------------------------------- 
+@app.route('/visualizarTarefa/<int:id><int:idbacklog>')
+def visualizarTarefa(id,idbacklog):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('visualizarTarefa')))  
+    tarefa = tb_tarefas.query.filter_by(cod_tarefa=id).first()
+    form = frm_visualizar_tarefa()
+    form.titulo_tarefa.data = tarefa.titulo_tarefa
+    form.descricao_tarefa.data = tarefa.descricao_tarefa
+    form.datacriacao_tarefa.data = tarefa.datacriacao_tarefa
+    form.dataconclusao_tarefa.data = tarefa.dataconclusao_tarefa
+    form.prioridade_tarefa.data = tarefa.prioridade_tarefa
+    form.estimativa_tarefa.data = tarefa.estimativa_tarefa
+    form.status_tarefa.data = tarefa.status_tarefa
+    form.obs_tarefa.data = tarefa.obs_tarefa
+    form.cod_usuario.data = tarefa.cod_usuario
+    
+    return render_template('visualizarTarefa.html', titulo='Visualizar Tarefa', id=id, form=form,idbacklog=idbacklog)   
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: editarTarefa
+##FUNÇÃO: formulário de edição
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/editarTarefa/<int:id>')
+def editarTarefa(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('editarTarefa')))  
+    tarefa = tb_tarefas.query.filter_by(cod_tarefa=id).first()
+    form = frm_editar_tarefa()
+    form.titulo_tarefa.data = tarefa.titulo_tarefa
+    form.descricao_tarefa.data = tarefa.descricao_tarefa
+    form.datacriacao_tarefa.data = tarefa.datacriacao_tarefa
+    form.dataconclusao_tarefa.data = tarefa.dataconclusao_tarefa
+    form.prioridade_tarefa.data = tarefa.prioridade_tarefa
+    form.estimativa_tarefa.data = tarefa.estimativa_tarefa
+    form.status_tarefa.data = tarefa.status_tarefa
+    form.obs_tarefa.data = tarefa.obs_tarefa
+    form.cod_usuario.data = tarefa.cod_usuario
+    idbacklog = tarefa.cod_backlog
+    
+    return render_template('editarTarefa.html', titulo='Editar Tarefa', id=id, form=form, idbacklog=idbacklog)   
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#ROTA: atualizarTarefa
+#FUNÇÃO: alterar informações no banco de dados
+#PODE ACESSAR: administrador
+#---------------------------------------------------------------------------------------------------------------------------------
+@app.route('/atualizarTarefa', methods=['POST',])
+def atualizarTarefa():
+    if 'usuario_logado' not in session or session['usuario_logado'] == None:
+        flash('Sessão expirou, favor logar novamente','danger')
+        return redirect(url_for('login',proxima=url_for('atualizarTarefa')))      
+    form = frm_editar_backlog(request.form)
+    if form.validate_on_submit():
+        id = request.form['id']
+        idbacklog = request.form['idbacklog']
+        tarefa = tb_tarefas.query.filter_by(cod_tarefa=request.form['id']).first()
+        tarefa.titulo_tarefa = form.titulo_tarefa.data
+        tarefa.descricao_tarefa = form.descricao_tarefa.data
+        tarefa.prioridade_tarefa = form.prioridade_tarefa.data
+        tarefa.estimativa_tarefa = form.estimativa_tarefa.data
+        tarefa.datacriacao_tarefa = form.datacriacao_tarefa.data
+        tarefa.dataconclusao_tarefa = form.dataconclusao_tarefa.data
+        tarefa.obs_tarefa = form.obs_tarefa.data
+        tarefa.status_tarefa = form.status_tarefa.data
+        tarefa.cod_usuario = form.cod_usuario.data
+        db.session.add(tarefa)
+        db.session.commit()
+        flash('Tarefa atualizado com sucesso!','success')
+    else:
+        flash('Favor verificar os campos!','danger')
+    return redirect(url_for('visualizarTarefa', id=request.form['id'], idbacklog=idbacklog))

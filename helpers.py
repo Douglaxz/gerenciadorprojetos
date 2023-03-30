@@ -141,7 +141,7 @@ class frm_editar_backlog(FlaskForm):
     salvar = SubmitField('Salvar')    
 
 #---------------------------------------------------------------------------------------------------------------------------------
-#FORMUÁRIO: tipo de usuário
+#FORMUÁRIO: backlogs
 #TIPO: visualização
 #TABELA: tb_cliente
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -160,3 +160,40 @@ class frm_visualizar_backlog(FlaskForm):
     salvar = SubmitField('Salvar')        
 
 
+##################################################################################################################################
+#TAREFAS
+##################################################################################################################################
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: tarefas
+#TIPO: edição
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_editar_tarefa(FlaskForm):
+    titulo_tarefa = StringField('Título:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o nome do projeto"})
+    descricao_tarefa = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o nome do projeto"})
+    datacriacao_tarefa = DateField('Data início:')
+    dataconclusao_tarefa = DateField('Data conclusão:')
+    obs_tarefa = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
+    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
+    estimativa_tarefa = DecimalField('Tempo estimado em horas:')
+    prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
+    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})
+    salvar = SubmitField('Salvar')    
+
+#---------------------------------------------------------------------------------------------------------------------------------
+#FORMUÁRIO: tarefas
+#TIPO: visualização
+#TABELA: tb_cliente
+#---------------------------------------------------------------------------------------------------------------------------------
+class frm_visualizar_tarefa(FlaskForm):
+    titulo_tarefa = StringField('Título:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    descricao_tarefa = TextAreaField('Descrição:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={'readonly': True})
+    datacriacao_tarefa = DateField('Data início:', render_kw={'readonly': True})
+    dataconclusao_tarefa = DateField('Data conclusão:', render_kw={'readonly': True})
+    obs_tarefa = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
+    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+    estimativa_tarefa = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
+    prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
+    cod_usuario = SelectField('Tipo:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})    
+    salvar = SubmitField('Salvar') 

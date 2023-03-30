@@ -5,7 +5,7 @@
     <i class="bi bi-archive" data-toggle="tooltip" data-placement="right"></i> {{ titulo }}
   </div>
   <div class="box_botoes">
-    <a class="btn btn_titulo" href="{{url_for('editarProjeto',id=id)}}"><i class="bi bi-pencil" style="font-size:1.5rem; color:white;"></i></a>
+    <a class="btn btn_titulo" href="{{url_for('editarBacklog',id=id)}}"><i class="bi bi-pencil" style="font-size:1.5rem; color:white;"></i></a>
   </div>
   <div class="box_botoes">
     <a class="btn btn_titulo" href="{{url_for('projeto')}}"><i class="bi bi-reply" style="font-size:1.5rem; color:white;"></i></a>
@@ -43,37 +43,9 @@
   </div>
 </div>
 <div class="boxcentral">
-  <table class="table table-bordered table-responsiv table-hover">
-      <thead class="bg-dark text-white">
-          <tr>
-              <th width="95%">Backlogs</th>
-              <th width="5%">Status</th>
-              <th width="5%">Ações</th>
-          </tr>
-      </thead>
-      <tbody>
-          {% for backlog in backlogs%}
-          <tr>
-              <td class="text-left">{{ backlog.desc_backlog }}</td>
-              <td class="text-left">
-                {% if backlog.status_backlog == 0: %}
-                <i class="bi bi-toggle-on text-success" style="font-size:2rem; color:white;">
-                {% else %}
-                <i class="bi bi-toggle-off text-danger" style="font-size:2rem; color:white;">
-                {% endif %}                       
-              <td>
-                <a class="btn" href="{{url_for('visualizarBacklog',id=backlog.cod_backlog)}}"><i class="bi bi-eye" style="font-size:1.5rem; color:black;"></i></a>
-            </td>              
-          </tr>
-          {% endfor %}
-      </tbody>
-  </table>
-</div>
-<div class="boxcentral">
   {% for backlog in backlogs%}
-  <a class="btn" href="{{url_for('visualizarBacklog',id=backlog.cod_backlog)}}">
+  <a class="btn" href="{{url_for('visualizarBacklog',id=backlog.cod_backlog,idprojeto=id)}}">
   <div class="cards__lista">
-    
     <div class="card__info">
       <div class="card-header_backlog">
         <h2>{{ backlog.titulo_backlog }}</h2>
@@ -81,11 +53,17 @@
       <div class="card-body_backlog">
         <p>{{ backlog.desc_backlog }}</p>
       </div>  
-    
   </div>    
 </div>
 </a>
 {% endfor %}
-
+</div>
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-bag" data-toggle="tooltip" data-placement="right"></i> Sprints
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('novoBacklog',id=id)}}"><i class="bi bi-file-earmark-plus" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
 </div>
 {% endblock%}

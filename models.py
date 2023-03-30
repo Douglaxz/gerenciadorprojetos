@@ -64,3 +64,21 @@ class tb_backlogs(db.Model):
     def __repr__(self):
         return '<Name %r>' % self.name
     
+#---------------------------------------------------------------------------------------------------------------------------------
+#TABELA: PROJETOS
+#ORIGEM: BANCO DE DADOS
+#---------------------------------------------------------------------------------------------------------------------------------
+class tb_tarefas(db.Model):
+    cod_tarefas = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    titulo_tarefa = db.Column(db.String(45), nullable=False)
+    descricao_tarefa = db.Column(db.String(500), nullable=False)
+    prioridade_tarefa = db.Column(db.Integer, nullable=False)
+    estimativa_tarefa = db.Column(db.Integer, nullable=False)
+    datacriacao_tarefa = db.Column(db.Date, nullable=False)
+    dataconclusao_tarefa = db.Column(db.Date, nullable=False)
+    obs_tarefa = db.Column(db.String(500), nullable=False)    
+    status_tarefa = db.Column(db.Integer, nullable=False)
+    cod_usuario = db.Column(db.Integer, nullable=False)
+    cod_backlog = db.Column(db.Integer, nullable=False)    
+    def __repr__(self):
+        return '<Name %r>' % self.name

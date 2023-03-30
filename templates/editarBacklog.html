@@ -1,0 +1,56 @@
+{% extends "template.html"%}
+{% block conteudo %}
+<form method="post" action="{{ url_for('atualizarBacklog') }}" enctype="multipart/form-data" id="formulario">
+<div class="box_cabecalho">
+  <div class="box_titulo_interno">
+    <i class="bi bi-briefcase" data-toggle="tooltip" data-placement="right" title="Tipo Veiculo"></i> {{ titulo }}
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="#" onclick="myFunction()"><i class="bi bi-save" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+  <div class="box_botoes">
+    <a class="btn btn_titulo" href="{{url_for('visualizarBacklog',id=id,idprojeto=idprojeto)}}"><i class="bi bi-reply" style="font-size:1.5rem; color:white;"></i></a>
+  </div>
+</div>
+<div class="boxformulario">
+  <fieldset>
+    <input type="hidden" name="id" id="id" value="{{id}}">
+    <input type="hidden" name="idprojeto" id="idprojeto" value="{{idprojeto}}">
+    {{form.csrf_token()}}
+    <div class="form-group">{{ form.titulo_backlog.label(class='form-label') }}
+      {{ form.titulo_backlog(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.desc_backlog.label(class='form-label') }}
+      {{ form.desc_backlog(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.datacriacao_backlog.label(class='form-label') }}
+      {{ form.datacriacao_backlog(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.dataconclusao_backlog.label(class='form-label') }}
+      {{ form.dataconclusao_backlog(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.status_backlog.label(class='form-label') }}
+      {{ form.status_backlog(class='form-control') }}
+    </div>   
+    <div class="form-group">{{ form.estimativa_backlog.label(class='form-label') }}
+      {{ form.estimativa_backlog(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.esforco_backlog.label(class='form-label') }}
+      {{ form.esforco_backlog(class='form-control') }}
+    </div>
+    <div class="form-group">{{ form.dependencias_backlog.label(class='form-label') }}
+      {{ form.dependencias_backlog(class='form-control') }}
+    </div>   
+    <div class="form-group">{{ form.criterios_backlog.label(class='form-label') }}
+      {{ form.criterios_backlog(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.obs_backlog.label(class='form-label') }}
+      {{ form.obs_backlog(class='form-control') }}
+    </div>        
+    <div class="form-group">{{ form.prioridade_backlog.label(class='form-label') }}
+      {{ form.prioridade_backlog(class='form-control') }}
+    </div> 
+  </fieldset>
+</div>
+</form>
+{% endblock%}
