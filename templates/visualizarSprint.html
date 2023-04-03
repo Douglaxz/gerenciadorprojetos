@@ -37,18 +37,83 @@
   </div>
 </div>
 <div class="boxcentral">
-  {% for tarefa in tarefas%}
-  <a class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
-  <div class="cards__lista">
-    <div class="card__info">
-      <div class="card-header_backlog">
-        <h2>{{ tarefa.titulo_tarefa }}</h2>
-      </div>   
-      <div class="card-body_backlog">
-        <p>{{ tarefa.descricao_tarefa }}</p>
-      </div>  
-  </div>    
-</div>
-</a>
-{% endfor %}
+  <table class="table table-bordered table-responsiv table-hover">
+    <thead class="bg-dark text-white">
+        <tr>
+            <th width="25%">A Fazer</th>
+            <th width="25%">Fazendo</th>
+            <th width="25%">Em Análise</th>
+            <th width="25%">Concluído</th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-sprint">
+          {% for tarefa in tarefas_0%}
+          <a target="_black" class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
+          <div class="cards__lista_sprint">
+            <div class="card__info">
+              <div class="card-header_backlog">
+                <h2>{{ tarefa.titulo_tarefa }}</h2>
+              </div>   
+              <div class="card-body_backlog">
+                <p>{{ tarefa.descricao_tarefa }}</p>
+              </div>  
+            </div>    
+          </div>
+          </a>
+          {% endfor %}
+        </td>
+        <td class="td-sprint">
+          {% for tarefa in tarefas_1%}
+          <a target="_black" class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
+          <div class="cards__lista_sprint">
+            <div class="card__info">
+              <div class="card-header_backlog">
+                <h2>{{ tarefa.titulo_tarefa }}</h2>
+              </div>   
+              <div class="card-body_backlog">
+                <p>{{ tarefa.descricao_tarefa }}</p>
+              </div>  
+            </div>    
+          </div>
+          </a>
+          {% endfor %}
+        </td>      
+        <td>
+          {% for tarefa in tarefas_2%}
+          <a target="_black" class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
+          <div class="cards__lista_sprint">
+            <div class="card__info">
+              <div class="card-header_backlog">
+                <h2>{{ tarefa.titulo_tarefa }}</h2>
+              </div>   
+              <div class="card-body_backlog">
+                <p>{{ tarefa.descricao_tarefa }}</p>
+              </div>  
+            </div>    
+          </div>
+          </a>
+          {% endfor %}
+        </td>          
+        <td class="td-sprint">
+          {% for tarefa in tarefas_3%}
+          <a target="_black" class="btn" href="{{url_for('visualizarTarefa',id=tarefa.cod_tarefa)}}">
+          <div class="cards__lista_sprint">
+            <div class="card__info">
+              <div class="card-header_backlog">
+                <h2>{{ tarefa.titulo_tarefa }}</h2>
+              </div>   
+              <div class="card-body_backlog">
+                <p>{{ tarefa.descricao_tarefa }}</p>
+              </div>  
+            </div>    
+          </div>
+          </a>
+          {% endfor %}
+        </td>        
+      </tr>
+      
+
+    </table>
 </div>{% endblock%}

@@ -958,7 +958,13 @@ def visualizarSprint(id):
         flash('Sessão expirou, favor logar novamente','danger')
         return redirect(url_for('login',proxima=url_for('visualizarSprint')))  
     sprint = tb_sprints.query.filter_by(cod_sprint=id).first()
-    tarefas = tb_tarefas.query.filter_by(cod_sprint=id).all()
+    tarefas_0 = tb_tarefas.query.filter_by(cod_sprint=id, status_tarefa=0).all()
+    tarefas_1 = tb_tarefas.query.filter_by(cod_sprint=id, status_tarefa=1).all()
+    tarefas_2 = tb_tarefas.query.filter_by(cod_sprint=id, status_tarefa=2).all()
+    tarefas_3 = tb_tarefas.query.filter_by(cod_sprint=id, status_tarefa=3).all()
+    
+
+
     form = frm_visualizar_sprint()
     form.num_sprint.data = sprint.num_sprint
     form.datainicio_sprint.data = sprint.datainicio_sprint
@@ -966,7 +972,7 @@ def visualizarSprint(id):
     form.status_sprint.data = sprint.status_sprint
     idprojeto = sprint.cod_projeto
     
-    return render_template('visualizarSprint.html', titulo='Visualizar Sprint', id=id, form=form,idprojeto=idprojeto,tarefas=tarefas)   
+    return render_template('visualizarSprint.html', titulo='Visualizar Sprint', id=id, form=form,idprojeto=idprojeto,tarefas_0=tarefas_0,tarefas_1=tarefas_1,tarefas_2=tarefas_2,tarefas_3=tarefas_3)   
 
 #---------------------------------------------------------------------------------------------------------------------------------
 #ROTA: editarSprint

@@ -175,7 +175,7 @@ class frm_editar_tarefa(FlaskForm):
     datacriacao_tarefa = DateField('Data início:')
     dataconclusao_tarefa = DateField('Data conclusão:')
     obs_tarefa = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=500)], render_kw={"placeholder": "digite o descritivo"})
-    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')])
+    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'A Fazer'),(1, 'Fazendo'),(2, 'Em análise'),(3, 'Concluído')])
     estimativa_tarefa = DecimalField('Tempo estimado em horas:')
     prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
     cod_usuario = SelectField('Responsável:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()])
@@ -192,7 +192,7 @@ class frm_visualizar_tarefa(FlaskForm):
     datacriacao_tarefa = DateField('Data início:', render_kw={'readonly': True})
     dataconclusao_tarefa = DateField('Data conclusão:', render_kw={'readonly': True})
     obs_tarefa = TextAreaField('Observações:', [validators.DataRequired(), validators.Length(min=1, max=50)], render_kw={'readonly': True})
-    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'Ativo'),(1, 'Inativo')], render_kw={'readonly': True})
+    status_tarefa = SelectField('Situação:', coerce=int, choices=[(0, 'A Fazer'),(1, 'Fazendo'),(2, 'Em análise'),(3, 'Concluído')], render_kw={'readonly': True})
     estimativa_tarefa = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
     prioridade_tarefa = SelectField('Prioridade:', coerce=int, choices=[(0, 'Alta'),(1, 'Média'),(2, 'Baixa')])
     cod_usuario = SelectField('Responsável:', coerce=int, choices=[(g.cod_user, g.name_user) for g in tb_user.query.all()], render_kw={'readonly': True})    
@@ -205,7 +205,7 @@ class frm_visualizar_tarefa(FlaskForm):
 #---------------------------------------------------------------------------------------------------------------------------------
 #FORMUÁRIO: sprint
 #TIPO: edição
-#TABELA: tb_cliente
+#TABELA: tb_sprint
 #---------------------------------------------------------------------------------------------------------------------------------
 class frm_editar_sprint(FlaskForm):
     num_sprint = DecimalField('Número da sprint:')
@@ -216,7 +216,7 @@ class frm_editar_sprint(FlaskForm):
 #---------------------------------------------------------------------------------------------------------------------------------
 #FORMUÁRIO: sprint
 #TIPO: visualização
-#TABELA: tb_cliente
+#TABELA: tb_sprint
 #---------------------------------------------------------------------------------------------------------------------------------
 class frm_visualizar_sprint(FlaskForm):
     num_sprint = DecimalField('Tempo estimado em horas:', render_kw={'readonly': True})
